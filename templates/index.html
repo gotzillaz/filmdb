@@ -17,21 +17,41 @@
     </style>
   </head>
   <body>
-    Hello
+    <form id='form' action='/ajax' method='post'>
+      <input type='text' name='username'>
+      <input type='password' name='password'>
+      <input type='submit' value='Submit'>
+    </form>
     <script>
-      function post() {
-        var
-          req = new XMLHttpRequest();
-          url = '/ajax';
-        req.open('POST', url, true);
-        req.send();
+      function ajaxRequest(url) {
+        var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
           if (req.readyState === 4 && req.status === 200) {
-            console.log(req.responseText);
+            // req.responseText
           }
         }
+        req.open('POST', url, true);
+        req.send();
       }
-      post();
+
+      function ajaxPost(form) {
+        var req  = new XMLHttpRequest();
+            url  = '/ajax';
+            data = new FormData(form);
+        req.onreadystatechange = function () {
+          if (req.readyState === 4 && req.status === 200) {
+            // req.responseText
+          }
+        }
+        req.open('POST', form.action, true);
+        req.send(data);
+      }
+
+      var form = document.getElementById('form');
+      form.addEventListener('submit', function (event) {
+        ajaxPost(form);
+        event.preventDefault();
+      });
     </script>
   </body>
 </html>
