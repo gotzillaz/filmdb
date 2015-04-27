@@ -7,6 +7,44 @@ c = conn.cursor()
 
 app = Flask(__name__)
 
+def showTableSchemaObj():
+    f = open('table.sql','r')
+    all_line = ''.join(f.readlines())
+    tables = re.findall(r'CREATE TABLE (.*?);', all_line, re.S)
+    all_obj = [] 
+    for table in tables:
+        name = table.split()[0]
+        attrs = map(lambda x:x.strip(), re.findall(r'\((.*?)\n\)', table, re.S)[0].split(','))
+        print "*"*50
+        obj = {}
+        obj['name'] = name
+        print name
+        print attrs
+        al = []
+        for at in attrs:
+            if at[:11] == "PRIMARY KEY":
+                break
+            sp = at.split()
+            attr_obj = {}
+            attr_obj['name'] = sp[0]
+            attr_obj['type'] = sp[1]
+            if(sp[-2]+sp[-1] == "NOTNULL"): attr_obj['required'] = True 
+            else : attr_obj['required'] = False
+            al.append(attr_obj)
+        print al
+        obj['attr'] = al
+        primary = map(lambda x:x.strip(), re.findall(r'PRIMARY KEY \((.*?)\)', table, re.S)[0].split(','))
+        print primary
+        obj['primary'] = primary
+        foreign_lt = re.findall(r'REFERENCES (.*?)\((.*?)\)', table, re.S)
+        foreign_obj_lt = []
+        for ob in foreign_lt:
+            foreign_obj_lt.append({'ref':ob[0], 'attr':ob[1]})
+        print foreign_obj_lt
+        obj['foreign'] = foreign_obj_lt
+        all_obj.append(obj)
+    return json.dumps(all_obj)
+
 def objToJSON(st) :
     return json.dumps(st)
 
