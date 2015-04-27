@@ -37,6 +37,7 @@ def ajaxtest():
     if request.method == "POST":
         user = request.args.get('username', '', type=str)
         pwd = request.args.get('password', '', type=str)
+        print user, pwd , request.args
         return jsonify(user=user, pwd=pwd)  
     else:
         return jsonify(result="GET")
