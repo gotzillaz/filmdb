@@ -52,13 +52,13 @@
         padding: 8px 12px;
         margin-top: 16px;
         border-radius: 4px;
-        text-transform: uppercase;
         border: none;
         outline: none;
         cursor: pointer;
         font-family: inherit;
         font-size: 0.8rem;
         opacity: 0.2;
+        text-transform: uppercase;
         transition: opacity 0.4s ease-in-out;
       }
 
@@ -89,35 +89,34 @@
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js'></script>
     <script>
-      function ajaxRequest(url) {
+      function ajaxRequest(url, callback) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
           if (req.readyState === 4 && req.status === 200) {
-            // req.responseText
+            callback(req.responseText);
           }
         }
         req.open('POST', url, true);
         req.send();
       }
 
-      function ajaxPost(url, params) {
+      function ajaxPost(url, params, callback) {
         var req  = new XMLHttpRequest();
         req.onreadystatechange = function () {
           if (req.readyState === 4 && req.status === 200) {
-            // req.responseText
+            callback(req.responseText);
           }
         }
-        console.log(params);
         req.open('POST', url, true);
         req.send(params);
       }
 
-      function ajaxPostForm(form) {
+      function ajaxPostForm(form, callback) {
         var req  = new XMLHttpRequest();
             data = new FormData(form);
         req.onreadystatechange = function () {
           if (req.readyState === 4 && req.status === 200) {
-            // req.responseText
+            callback(req.responseText);
           }
         }
         req.open('POST', form.action, true);
@@ -136,7 +135,15 @@
         // Initialize form
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
-          ajaxPost(form.action, 'query=' + editor.getSession().getValue());
+          if (event.which !== 13) {
+            ajaxPost(
+              form.action,
+              'query=' + editor.getSession().getValue().trim(),
+              function (responseText) {
+                console.log(responseText);
+              }
+            );
+          }
           event.preventDefault();
         });
       });
