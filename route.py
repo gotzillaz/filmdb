@@ -19,9 +19,8 @@ def readTableFile():
 
 @app.route("/")
 @app.route("/<name>")
-
 def hello(name=None):
-    return render_template('hello.html', name=name)
+    return render_template('index.html', name=name)
 
 @app.route("/sql")
 def sql():
@@ -33,9 +32,12 @@ def sql():
 def table():
     return readTableFile()
 
-@app.route('/ajax')
+@app.route('/ajax', methods=['GET', 'POST'])
 def ajaxtest():
-    return jsonify(result="GGDP")  
+    if request.method == "POST":
+        return jsonify(result="GGDP")  
+    else:
+        return jsonify(result="GET")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
