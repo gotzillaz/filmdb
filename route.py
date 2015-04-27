@@ -1,6 +1,9 @@
 from flask import Flask
 from flask import render_template
-import json
+import json, sqlite3
+
+conn = sqlite3.connect('db.sqlite3')
+conn.execute('PRAGMA foreign_keys = ON')
 app = Flask(__name__)
 
 @app.route("/")
