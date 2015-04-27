@@ -80,5 +80,12 @@ def ajaxtest():
     else:
         return jsonify(result="GET")
 
+@app.route('/select', methods=['GET', 'POST'])
+def select():
+    if request.method == 'POST':
+        print request.args, request.form
+    else:
+        pass
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
