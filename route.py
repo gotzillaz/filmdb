@@ -1,7 +1,14 @@
 from flask import Flask, jsonify, render_template, request
 import json, sqlite3, re
 
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
 conn = sqlite3.connect('db.sqlite3')
+conn.row_factory = dict_factory
 conn.execute('PRAGMA foreign_keys = ON')
 c = conn.cursor()
 
@@ -84,6 +91,9 @@ def ajaxtest():
 def select():
     if request.method == 'POST':
         print request.data, request.args, request.form
+        data = json.loads(request.data)
+        cur.execute(data['query'])
+        return jsonify(cur.fetchall())
     else:
         pass
 
