@@ -9,10 +9,11 @@
 
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Ubuntu+Mono'>
     <style>
+
       body {
         position: relative;
         display: block;
-        padding: 0;
+        padding: 1px;
         margin: 0;
         color: #272822;
         background-color: #f9f9f9;
@@ -29,6 +30,7 @@
         position: relative;
         display: block;
         width: 480px;
+        max-width: 80%;
         padding: 16px;
         margin: auto;
         border-radius: 4px;
@@ -79,16 +81,11 @@
       <button type='submit' class='editor-submit'>Submit</button>
     </form>
 
-    <!-- <form id='query-form' action='/ajax' method='post'>
-      <input type='text' name='username'>
-      <input type='password' name='password'>
-      <input type='submit' value='Submit'>
-    </form> -->
-
     <!-- Script -->
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js'></script>
     <script>
+
       function ajaxRequest(url, callback) {
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
@@ -112,7 +109,7 @@
       }
 
       function ajaxPostForm(form, callback) {
-        var req  = new XMLHttpRequest();
+        var req  = new XMLHttpRequest(),
             data = new FormData(form);
         req.onreadystatechange = function () {
           if (req.readyState === 4 && req.status === 200) {
@@ -138,7 +135,7 @@
           if (event.which !== 13) {
             ajaxPost(
               form.action,
-              'query=' + editor.getSession().getValue().trim(),
+              JSON.stringify({ query: editor.getSession().getValue().trim() }),
               function (responseText) {
                 console.log(responseText);
               }
@@ -147,6 +144,7 @@
           event.preventDefault();
         });
       });
+
     </script>
   </body>
 </html>
