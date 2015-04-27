@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, Response
 import json, sqlite3, re
 
 def dict_factory(cursor, row):
@@ -10,7 +10,7 @@ def dict_factory(cursor, row):
 conn = sqlite3.connect('db.sqlite3')
 conn.row_factory = dict_factory
 conn.execute('PRAGMA foreign_keys = ON')
-c = conn.cursor()
+cur = conn.cursor()
 
 app = Flask(__name__)
 
@@ -93,7 +93,9 @@ def select():
         print request.data, request.args, request.form
         data = json.loads(request.data)
         cur.execute(data['query'])
-        return jsonify(cur.fetchall())
+        lt = cur.fetchall()
+        print json.dumps(lt)
+        return Response(json.dumps(lt), mimetype='application/json') 
     else:
         pass
 
