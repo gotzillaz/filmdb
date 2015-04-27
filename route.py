@@ -35,7 +35,9 @@ def table():
 @app.route('/ajax', methods=['GET', 'POST'])
 def ajaxtest():
     if request.method == "POST":
-        return jsonify(result="GGDP")  
+        user = request.args.get('username', '', type=str)
+        pwd = request.args.get('password', '', type=str)
+        return jsonify(user=user, pwd=pwd)  
     else:
         return jsonify(result="GET")
 
