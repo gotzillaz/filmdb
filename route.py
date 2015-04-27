@@ -1,12 +1,21 @@
-from flask import Flask
-from flask import render_template
-import json, sqlite3
+from flask import Flask, jsonify, render_template, request
+import json, sqlite3, re
 
 conn = sqlite3.connect('db.sqlite3')
 conn.execute('PRAGMA foreign_keys = ON')
 c = conn.cursor()
 
 app = Flask(__name__)
+
+def objToJSON(st) :
+    return json.dumps(st)
+
+def readTableFile():
+    f = open('table.sql', 'r')
+    all_line = ''.join(map(lambda x: x, f.readlines()))
+    table = re.findall(r'CREATE(.*?));', all_line, re.S)
+    f.close()
+    return '=======\n'.join(table)
 
 @app.route("/")
 @app.route("/<name>")
@@ -19,8 +28,13 @@ def sql():
     return str(c.fetchall())
     #return str(len(st))
 
-def objToJSON(st) :
-    return json.dumps(st)
+@app.route("/table")
+def table():
+    return readTableFile()
+
+@app.route('/ajax')
+def ajaxtest():
+    return jsonify(result="GGDP")  
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=8080)
