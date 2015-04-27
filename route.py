@@ -83,7 +83,7 @@ def ajaxtest():
 @app.route('/select', methods=['GET', 'POST'])
 def select():
     if request.method == 'POST':
-        print request.args, request.form
+        print request.data, request.args, request.form
     else:
         pass
 
