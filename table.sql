@@ -21,7 +21,7 @@ CREATE TABLE Episode (
   FilmID        INTEGER                   NOT NULL,
   Name          TEXT                      NOT NULL,
   Number        INTEGER                   NOT NULL,
-  Season        TEXT                      NOT NULL,
+  Season        INTEGER                   NOT NULL,
   FOREIGN KEY   (FilmID)    REFERENCES    Film(FilmID)
 );
 
@@ -79,7 +79,7 @@ CREATE TABLE Direction (
 
 CREATE TABLE Poster (
   PosterID      INTEGER    PRIMARY KEY    NOT NULL,
-  Image         INTEGER                   NOT NULL
+  Image         BLOB                      NOT NULL
 );
 
 CREATE TABLE FilmPoster (
