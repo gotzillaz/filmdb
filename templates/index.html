@@ -57,8 +57,12 @@
       }
 
       function queryResponseHandler(data) {
-        // TODO: Modified response query here
-        console.log(data);
+        var records = JSON.parse(data);
+        if (data instanceof Array) {
+          console.log(records);
+        } else {
+          alert('Something wrong!!');
+        }
       }
 
       document.addEventListener('DOMContentLoaded', function () {
