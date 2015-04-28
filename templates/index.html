@@ -56,6 +56,11 @@
         req.send(params);
       }
 
+      function queryResponseHandler(data) {
+        // TODO: Modified response query here
+        console.log(data);
+      }
+
       document.addEventListener('DOMContentLoaded', function () {
 
         var editor = ace.edit('editor');
