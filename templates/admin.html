@@ -82,18 +82,6 @@
         req.send(params);
       }
 
-      function ajaxPostForm(form, callback) {
-        var req  = new XMLHttpRequest(),
-            data = new FormData(form);
-        req.onreadystatechange = function () {
-          if (req.readyState === 4 && req.status === 200) {
-            callback(req.responseText);
-          }
-        }
-        req.open('POST', form.action, true);
-        req.send(data);
-      }
-
       function createTable(data) {
         var tablelist = document.getElementById('tablelist');
         tablelist.addEventListener('click', function (event) {
@@ -167,7 +155,7 @@
             var value = form.querySelector('[name=' + attrData.name + ']').value;
             formData.append(attrData.name, value);
           });
-          ajaxPostForm(formData, function (responseText) {
+          ajaxPost('/insert', formData, function (responseText) {
             console.log(responseText);
           });
           event.preventDefault();
