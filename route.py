@@ -108,9 +108,9 @@ def select():
             print "After"
             print json.dumps(lt)
             return Response(json.dumps(lt), mimetype='application/json') 
-        except:
-            print traceback.print_exec()
-            return jsonify(status=False,error=str(traceback.print_exec()))
+        except BaseException, e:
+            print str(e)
+            return jsonify(status=False,error=str(e))
     else:
         pass
 
@@ -119,9 +119,9 @@ def schema():
     if request.method == 'POST':
         try:
             return showTableSchemaObj()
-        except:
-            print traceback.print_exec()
-            return jsonify(status=False, error=str(traceback.print_exec()))
+        except BaseException, e:
+            print str(e)
+            return jsonify(status=False, error=str(e))
     else:
         pass
 
@@ -147,9 +147,9 @@ def insert():
             conn.execute(query_str, tuple(value))
             conn.commit()
             return jsonify(status=True)
-        except:
-            print traceback.print_exec()
-            return jsonify(status=False,error=str(traceback.print_exec()))
+        except BaseException, e:
+            print str(e)
+            return jsonify(status=False,error=str(e))
     else:
         pass
 
