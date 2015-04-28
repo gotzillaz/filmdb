@@ -150,21 +150,16 @@
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
           event.preventDefault();
-          var formData  = [],
+          var formData  = new FormData(),
               tableData = JSON.parse(form.dataset.tableData);
           tableData.attr.forEach(function (attrData) {
             var value = form.querySelector('[name=' + attrData.name + ']').value;
-            if (attrData.type === "INTEGER") {
-              value = parseInt(value);
+            if (attrData.type === "BLOB") {
+              value = form.querySelector('[name=' + attrData.name + ']').files[0];
             }
-            if (attrData.type === 'REAL') {
-              value = parseFloat(value);
-            }
-            var obj = {};
-            obj[attrData.name] = value;
-            formData.push(obj);
+            formData.append(attrData.name, value);
           });
-          formData.push({ table: tableData.name });
+          formData.append('table', tableData.name);
           ajaxPost('/insert', JSON.stringify(formData), function (responseText) {
             console.log(responseText);
           });
