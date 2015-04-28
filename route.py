@@ -116,5 +116,13 @@ def schema():
     else:
         pass
 
+@app.route('/insert', methods=['GET','POST'])
+def insert():
+    if request.method == 'POST':
+        print request.data, request.args, request.form
+        return "[]"
+    else:
+        pass
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
