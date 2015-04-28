@@ -149,11 +149,12 @@
 
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
+          event.preventDefault();
           var formData  = [],
               tableData = JSON.parse(form.dataset.tableData);
           tableData.attr.forEach(function (attrData) {
             var value = form.querySelector('[name=' + attrData.name + ']').value;
-            if (arrtData.type === "INTEGER") {
+            if (attrData.type === "INTEGER") {
               value = parseInt(value);
             }
             if (attrData.type === 'REAL') {
@@ -164,7 +165,7 @@
             formData.push(obj);
           });
           formData.push({ table: tableData.name });
-          ajaxPost('/insert', formData, function (responseText) {
+          ajaxPost('/insert', JSON.stringify(formData), function (responseText) {
             console.log(responseText);
           });
           event.preventDefault();
