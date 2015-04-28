@@ -102,6 +102,7 @@ def select():
             print json.dumps(lt)
             return Response(json.dumps(lt), mimetype='application/json') 
         except:
+            print traceback.print_exec()
             return jsonify(error=str(traceback.print_exec()))
     else:
         pass
@@ -112,6 +113,7 @@ def schema():
         try:
             return showTableSchemaObj()
         except:
+            print traceback.print_exec()
             return jsonify(error=str(traceback.print_exec()))
     else:
         pass
@@ -119,8 +121,21 @@ def schema():
 @app.route('/insert', methods=['GET','POST'])
 def insert():
     if request.method == 'POST':
-        print request.data, request.args, request.form
-        return "[]"
+        try:
+            print request.data, request.args, request.form
+            key = [], value = []
+            for k in request.form.keys():
+                key.append(k)
+                value.append(request.form[k])
+            query_str = 'INSERT INTO '+ request.form['table'] + '(' + ', '.join(key) + ') VALUES (' + ', '.join(value) + ')' 
+            print "=== Query_str ==="
+            print query_str
+            conn.execute(query_str)
+            conn.commit()
+            return jsonify(status=True)
+        except:
+            print traceback.print_exec()
+            return jsonify(status=False,error=str(traceback.print_exec()))
     else:
         pass
 
