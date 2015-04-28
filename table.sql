@@ -39,6 +39,8 @@ CREATE TABLE FilmCompany (
   FilmID        INTEGER     NOT NULL,
   CompanyID     INTEGER     NOT NULL,
   PRIMARY KEY (FilmID, CompanyID)
+  FOREIGN KEY (FilmID) REFERENCES Film(FilmID)
+  FOREIGN KEY (CompanyID) REFERENCES Company(CompanyID)
 );
 
 CREATE TABLE Genre (
@@ -51,6 +53,8 @@ CREATE TABLE FilmGenre (
   FilmID        INTEGER     NOT NULL,
   GenreID       INTEGER     NOT NULL,
   PRIMARY KEY (FilmID, GenreID)
+  FOREIGN KEY (FilmID) REFERENCES Film(FilmID)
+  FOREIGN KEY (GenreID) REFERENCES Genre(GenreID)
 );
 
 CREATE TABLE Person (
@@ -76,12 +80,16 @@ CREATE TABLE FilmCharacter (
   FilmID        INTEGER     NOT NULL,
   CharacterID   INTEGER     NOT NULL,
   PRIMARY KEY (FilmID, CharacterID)
+  FOREIGN KEY (FilmID) REFERENCES Film(FilmID)
+  FOREIGN KEY (CharacterID) REFERENCES Character(CharacterID)
 );
 
 CREATE TABLE Direction (
   FilmID        INTEGER     NOT NULL,
   PersonID      INTEGER     NOT NULL,
   PRIMARY KEY (FilmID, PersonID)
+  FOREIGN KEY (FilmID) REFERENCES Film(FilmID)
+  FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
 );
 
 CREATE TABLE Poster (
@@ -94,10 +102,14 @@ CREATE TABLE FilmPoster (
   FilmID        INTEGER     NOT NULL,
   PosterID      INTEGER     NOT NULL,
   PRIMARY KEY (FilmID, PosterID)
+  FOREIGN KEY (FilmID) REFERENCES Film(FilmID)
+  FOREIGN KEY (PosterID) REFERENCES Poster(PosterID)
 );
 
 CREATE TABLE PersonPoster (
   PersonID      INTEGER     NOT NULL,
   PosterID      INTEGER     NOT NULL,
   PRIMARY KEY (PersonID, PosterID)
+  FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
+  FOREIGN KEY (PosterID) REFERENCES Poster(PosterID)
 );
