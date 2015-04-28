@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template, request, Response
-import json, sqlite3, re
+import json, sqlite3, re, traceback
 
 def dict_factory(cursor, row):
     d = {}
@@ -90,12 +90,25 @@ def ajaxtest():
 @app.route('/select', methods=['GET', 'POST'])
 def select():
     if request.method == 'POST':
-        print request.data, request.args, request.form
-        data = json.loads(request.data)
-        cur.execute(data['query'])
-        lt = cur.fetchall()
-        print json.dumps(lt)
-        return Response(json.dumps(lt), mimetype='application/json') 
+        try:
+            print request.data, request.args, request.form
+            data = json.loads(request.data)
+            cur.execute(data['query'])
+            lt = cur.fetchall()
+            print json.dumps(lt)
+            return Response(json.dumps(lt), mimetype='application/json') 
+        except:
+            return jsonify(error=str(traceback.print_exec()))
+    else:
+        pass
+
+@app.route('/schema', methods=['GET','POST'])
+def schema():
+    if request.method == 'POST':
+        try:
+            return showTableSchemaObj()
+        except:
+            return jsonify(error=srt(traceback.print_exec()))
     else:
         pass
 
