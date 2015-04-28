@@ -155,6 +155,7 @@
             var value = form.querySelector('[name=' + attrData.name + ']').value;
             formData.append(attrData.name, value);
           });
+          formData.append('table', tableData.name);
           ajaxPost('/insert', formData, function (responseText) {
             console.log(responseText);
           });
