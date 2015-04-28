@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template, request, Response
-import json, sqlite3, re, traceback
+import json, sqlite3, re, traceback, base64
 
 def dict_factory(cursor, row):
     d = {}
@@ -98,7 +98,14 @@ def select():
             print request.data, request.args, request.form
             data = json.loads(request.data)
             cur.execute(data['query'])
+            print "Before"
             lt = cur.fetchall()
+            '''
+            for i in xrange(len(lt)):
+                if 'Image' in lt[i]:
+                    lt[i]['Image'] = base64.urlsafe_b64encode((lt[i]['Image']))
+            '''
+            print "After"
             print json.dumps(lt)
             return Response(json.dumps(lt), mimetype='application/json') 
         except:
@@ -122,7 +129,8 @@ def schema():
 def insert():
     if request.method == 'POST':
         try:
-            print request.data, request.args, request.form
+            print request.data, request.args, request.form, request.files
+            print len(request.files)
             key = []
             value = []
             for k in request.form.keys():
@@ -130,10 +138,13 @@ def insert():
                     continue
                 key.append(k)
                 value.append(request.form[k])
-            query_str = 'INSERT INTO '+ request.form['table'] + '(' + ', '.join(key) + ') VALUES (' + ', '.join(map(lambda x: '\"'+x+'\"',value)) + ')' 
+            for k in request.files.keys():
+                key.append(k)
+                value.append('data:' + request.files[k].mimetype + ';base64,' + base64.b64encode(sqlite3.Binary(request.files[k].read())))
+            query_str = 'INSERT INTO '+ request.form['table'] + '(' + ', '.join(key) + ') VALUES (?'+',?'*(len(value)-1) +')'  #+ ', '.join(map(lambda x: '\"'+x+'\"',value)) + ')' 
             print "=== Query_str ==="
             print query_str
-            conn.execute(query_str)
+            conn.execute(query_str, tuple(value))
             conn.commit()
             return jsonify(status=True)
         except:
