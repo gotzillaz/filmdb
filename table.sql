@@ -2,8 +2,9 @@ CREATE TABLE Film (
   FilmID        INTEGER     NOT NULL,
   Type          TEXT        NOT NULL,
   Name          TEXT        NOT NULL,
-  Year          TEXT        NOT NULL,
+  Year          INTEGER     NOT NULL,
   Plot          TEXT        NOT NULL,
+  Rating        REAL        NOT NULL,
   PRIMARY KEY (FilmID)
 );
 
@@ -12,7 +13,7 @@ CREATE TABLE Detail (
   FilmID        INTEGER     NOT NULL,
   Language      TEXT        NOT NULL,
   ReleaseDate   TEXT        NOT NULL,
-  Runtime       TEXT        NOT NULL,
+  Runtime       INTEGER     NOT NULL,
   AspectRatio   TEXT        NOT NULL,
   PRIMARY KEY (DetailID),
   FOREIGN KEY (FilmID) REFERENCES Film(FilmID)
@@ -94,6 +95,7 @@ CREATE TABLE Direction (
 
 CREATE TABLE Poster (
   PosterID      INTEGER     NOT NULL,
+  Name          TEXT        NOT NULL,
   Image         BLOB        NOT NULL,
   PRIMARY KEY (PosterID)
 );
