@@ -123,27 +123,17 @@ def insert():
     if request.method == 'POST':
         try:
             print request.data, request.args, request.form
-            data = json.loads(request.data)
-            print data 
             key = []
             value = []
-            tab = ""
-            for dat in data:
-                for k in dat.keys():
-                    print k
-                    if k == 'table':
-                        tab = dat[k]
-                        break
-                    key.append(k.encode('ascii', 'igonre'))
-                    if str(type(dat[k])) == "<type 'unicode'>":
-                        dat[k] = dat[k].encode('ascii', 'ignore')
-                    value.append(dat[k])
-            print key, value
-            query_str = 'INSERT INTO '+ tab + ' (' + ', '.join(key) + ') VALUES (?'+',?'*(len(key)-1) + ')'
+            for k in request.form.keys():
+                if k == 'table':
+                    continue
+                key.append(k)
+                value.append(request.form[k])
+            query_str = 'INSERT INTO '+ request.form['table'] + '(' + ', '.join(key) + ') VALUES (' + ', '.join(map(lambda x: '\"'+x+'\"',value)) + ')' 
             print "=== Query_str ==="
             print query_str
-            print tuple(value)
-            conn.execute(query_str, tuple(value))
+            conn.execute(query_str)
             conn.commit()
             return jsonify(status=True)
         except:

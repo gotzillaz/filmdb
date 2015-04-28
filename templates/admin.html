@@ -156,11 +156,12 @@
             var value = form.querySelector('[name=' + attrData.name + ']').value;
             if (attrData.type === "BLOB") {
               value = form.querySelector('[name=' + attrData.name + ']').files[0];
+              console.log(value)
             }
             formData.append(attrData.name, value);
           });
           formData.append('table', tableData.name);
-          ajaxPost('/insert', JSON.stringify(formData), function (responseText) {
+          ajaxPost('/insert', formData, function (responseText) {
             console.log(responseText);
           });
           event.preventDefault();
