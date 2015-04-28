@@ -1,4 +1,4 @@
 test.py
 .DS_Store
 *.swp
-*.sqlite3
+db.sqlite3
