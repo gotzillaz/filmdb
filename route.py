@@ -110,7 +110,7 @@ def select():
             return Response(json.dumps(lt), mimetype='application/json') 
         except:
             print traceback.print_exec()
-            return jsonify(error=str(traceback.print_exec()))
+            return jsonify(status=False,error=str(traceback.print_exec()))
     else:
         pass
 
@@ -121,7 +121,7 @@ def schema():
             return showTableSchemaObj()
         except:
             print traceback.print_exec()
-            return jsonify(error=str(traceback.print_exec()))
+            return jsonify(status=False, error=str(traceback.print_exec()))
     else:
         pass
 
