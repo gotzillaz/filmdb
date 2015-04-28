@@ -149,14 +149,20 @@
 
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
-          var formData  = [],
+          var formData  = new FormData(),
               tableData = JSON.parse(form.dataset.tableData);
           tableData.attr.forEach(function (attrData) {
             var value = form.querySelector('[name=' + attrData.name + ']').value;
-            formData.push({ attrData.name: value });
+            if (arrtData.type === "INTEGER") {
+              value = parseInt(value);
+            }
+            if (attrData.type === 'REAL') {
+              value = parseFloat(value);
+            }
+            formData.append(attrData.name, value);
           });
-          formData.push({ 'table': tableData.name });
-          ajaxPost('/insert', JSON.stringify(formData), function (responseText) {
+          formData.append('table', tableData.name);
+          ajaxPost('/insert', formData, function (responseText) {
             console.log(responseText);
           });
           event.preventDefault();
