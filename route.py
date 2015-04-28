@@ -46,7 +46,7 @@ def showTableSchemaObj():
         foreign_lt = re.findall(r'REFERENCES (.*?)\((.*?)\)', table, re.S)
         foreign_obj_lt = []
         for ob in foreign_lt:
-            foreign_obj_lt.append({'ref':ob[0], 'attr':ob[1]})
+            foreign_obj_lt.append({'ref':ob[0], 'name':ob[1]})
         print foreign_obj_lt
         obj['foreign'] = foreign_obj_lt
         all_obj.append(obj)
@@ -66,6 +66,10 @@ def readTableFile():
 @app.route("/<name>")
 def hello(name=None):
     return render_template('index.html', name=name)
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
 
 @app.route("/sql")
 def sql():
@@ -108,7 +112,7 @@ def schema():
         try:
             return showTableSchemaObj()
         except:
-            return jsonify(error=srt(traceback.print_exec()))
+            return jsonify(error=str(traceback.print_exec()))
     else:
         pass
 
