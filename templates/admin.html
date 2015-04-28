@@ -149,14 +149,14 @@
 
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
-          var formData  = new FormData(),
+          var formData  = [],
               tableData = JSON.parse(form.dataset.tableData);
           tableData.attr.forEach(function (attrData) {
             var value = form.querySelector('[name=' + attrData.name + ']').value;
-            formData.append(attrData.name, value);
+            formData.push({ attrData.name: value });
           });
-          formData.append('table', tableData.name);
-          ajaxPost('/insert', formData, function (responseText) {
+          formData.push({ 'table': tableData.name });
+          ajaxPost('/insert', JSON.stringify(formData), function (responseText) {
             console.log(responseText);
           });
           event.preventDefault();
