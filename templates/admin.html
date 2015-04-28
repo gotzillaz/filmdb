@@ -1,87 +1,47 @@
-
 <!DOCTYPE html>
-
 <html lang='en'>
   <head>
-    <title>Movies & Series Database</title>
 
-    <!-- Stylesheet -->
+    <!--
+      ===================================
+                  Stylesheet
+      ===================================
+    -->
 
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Ubuntu+Mono'>
     <style>
-      body {
-        position: relative;
-        display: block;
-        padding: 1px;
-        margin: 0;
-        color: #272822;
-        background-color: #f9f9f9;
-        font-family:  'Ubuntu Mono';
-        font-size: 14px;
-      }
 
-      h1 {
-        margin: 48px;
-        text-align: center;
-      }
+      body { position: relative; display: block; padding: 1px; margin: 0; color: #272822; background-color: #f9f9f9; font-family:  'Ubuntu Mono'; font-size: 14px; }
+      h1 { margin: 48px; text-align: center; }
 
-      .wrapper {
-        position: relative;
-        display: block;
-        width: 720px;
-        max-width: 80%;
-        margin: auto;
-        overflow: hidden;
-      }
-
-      .tablelist {
-        float: left;
-        position: relative;
-        display: block;
-        box-sizing: border-box;
-        width: 24%;
-        padding: 16px;
-        padding-left: 32px;
-        margin: 0;
-        border-radius: 4px;
-        color: #f9f9f9;
-        box-shadow: 0 0 2px #272822;
-        background-color: #272822;
-        overflow: hidden;
-        vertical-align: top;
-      }
-
-      .tablelist > li {
-        margin: 8px;
-        cursor: pointer;
-      }
-
-      .form {
-        float: right;
-        position: relative;
-        display: block;
-        box-sizing: border-box;
-        width: 74%;
-        padding: 16px;
-        margin: 0;
-        border-radius: 4px;
-        color: #f9f9f9;
-        box-shadow: 0 0 2px #272822;
-        background-color: #272822;
-        overflow: hidden;
-      }
+      .wrapper { position: relative; display: block; width: 720px; max-width: 80%; margin: auto; overflow: hidden; }
+      .tablelist { float: left; position: relative; display: block; box-sizing: border-box; width: 24%; padding: 16px; padding-left: 32px; margin: 0; border-radius: 4px; color: #f9f9f9; box-shadow: 0 0 2px #272822; background-color: #272822; overflow: hidden; vertical-align: top; }
+      .tablelist > li { margin: 8px; cursor: pointer; }
+      .form { float: right; position: relative; display: block; box-sizing: border-box; width: 74%; padding: 16px; margin: 0; border-radius: 4px; color: #f9f9f9; box-shadow: 0 0 2px #272822; background-color: #272822; overflow: hidden; }
+      .form input { display: block; padding: 8px 16px; margin: 12px; border: none; outline: none; border-radius: 4px; font-size: inherit; font-family: inherit; opacity: 0.6; transition: opacity 0.4s ease-in-out; }
+      .form input[type='file'] { padding-left: 0; }
+      .form input:focus { opacity: 1; }
+      .form input:last-child { margin-bottom: 24px; }
 
     </style>
+
+    <title>Movies & Series Database</title>
   </head>
   <body>
 
-    <!-- HTML -->
+    <!--
+      ===================================
+                     HTML
+      ===================================
+    -->
 
     <h1>Movies & Series Database Admin</h1>
-
     <div class='wrapper'>
       <ul id='tablelist' class='tablelist'></ul>
-      <form id='form' class='form'></form>
+      <form id='form' class='form'>
+        <div></div>
+        <div>Select table for insert data to database.</div>
+      </form>
     </div>
 
     <!-- <form id='query-form' action='/ajax' method='post'>
@@ -90,9 +50,12 @@
       <input type='submit' value='Submit'>
     </form> -->
 
-    <!-- Script -->
+    <!--
+      ===================================
+                  JavaScript
+      ===================================
+    -->
 
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js'></script>
     <script>
 
       function ajaxRequest(url, callback) {
@@ -104,6 +67,17 @@
         }
         req.open('POST', url, true);
         req.send();
+      }
+
+      function ajaxPost(url, params, callback) {
+        var req  = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+          if (req.readyState === 4 && req.status === 200) {
+            callback(req.responseText);
+          }
+        }
+        req.open('POST', url, true);
+        req.send(params);
       }
 
       function ajaxPostForm(form, callback) {
@@ -118,39 +92,61 @@
         req.send(data);
       }
 
+      function createTable(data) {
+        var tablelist = document.getElementById('tablelist');
+        tablelist.addEventListener('click', function (event) {
+          if (event.target.tagName === 'LI') {
+            data.forEach(function (tableData) {
+              if (tableData.name === event.target.textContent) {
+                createForm(tableData);
+              }
+            });
+          }
+        });
+        data.forEach(function (tableData) {
+          var item = document.createElement('LI');
+          item.textContent = tableData.name;
+          tablelist.appendChild(item);
+        });
+      }
+
+      function createForm(tableData) {
+        var form = document.getElementById('form');
+        form.replaceChild(document.createElement('DIV'), form.firstElementChild);
+        form = form.firstElementChild;
+        tableData.attr.forEach(function (attrData) {
+          var input = document.createElement('INPUT'),
+              type  = { INTEGER: 'number', REAL: 'number', TEXT: 'text', BLOB: 'file' };
+          input.name = attrData.name;
+          input.type = type[attrData.type]
+          input.placeholder = attrData.name;
+          form.appendChild(input);
+        });
+        tableData.foreign.forEach(function (foreignData) {
+          var select = document.createElement('SELECT'),
+              alias  = 'Name';
+          ajaxPost('/select', JSON.stringify({
+            query: ' SELECT ' + foreignData.attr + ' , ' + alias + ' FROM ' + foreignData.ref
+          }), function (responseText) {
+            var records = JSON.parse(responseText);
+            records.forEach(function (record) {
+              var option = document.createElement('OPTION');
+              option.textContent = record[alias];
+              option.value = record[foreignData.attr];
+              select.appendChild(option);
+            });
+          });
+          form.replaceChild(select, form.querySelector('[name=' + foreignData.attr + ']'))
+        });
+      }
+
+      function schemaHandler(data) {
+        createTable(data);
+      }
+
       document.addEventListener('DOMContentLoaded', function () {
-        ajaxRequest('/insert', function (responseText) {
-          (function (modelData) {
-
-            function createTablelist() {
-              var tablelist = document.getElementById('tablelist');
-              tablelist.addEventListener('click', function (event) {
-                if (event.target.tagName === 'LI') {
-                  modelData.forEach(function (element) {
-                    if (element.name === event.target.textContent) {
-                      createForm(element);
-                    }
-                  });
-                }
-              });
-              modelData.forEach(function (element) {
-                var item = document.createElement('LI');
-                item.textContent = element.name;
-                tablelist.appendChild(item);
-              });
-            }
-
-            function createForm(tableData) {
-              var form = document.getElementById('form');
-              var p = document.createElement('P');
-              console.log(tableData);
-              p.textContent = JSON.stringify(tableData.attr)
-              form.appendChild(p);
-            }
-
-            createTablelist();
-
-          }(JSON.parse(responseText)));
+        ajaxRequest('/schema', function (responseText) {
+          schemaHandler(JSON.parse(responseText));
         });
       });
 
@@ -158,10 +154,14 @@
 
 
 
-
-      function ajaxRequest(url, callback) {
-        callback('[{"foreign": [], "primary": ["FilmID"], "name": "Film", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "TEXT", "name": "Type"}, {"required": true, "type": "TEXT", "name": "Title"}, {"required": true, "type": "TEXT", "name": "Year"}, {"required": true, "type": "TEXT", "name": "Plot"}]}, {"foreign": [{"ref": "Film", "attr": "FilmID"}], "primary": ["DetailID"], "name": "Detail", "attr": [{"required": true, "type": "INTEGER", "name": "DetailID"}, {"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "TEXT", "name": "Language"}, {"required": true, "type": "TEXT", "name": "ReleaseDate"}, {"required": true, "type": "TEXT", "name": "Runtime"}, {"required": true, "type": "TEXT", "name": "AspectRatio"}]}, {"foreign": [{"ref": "Film", "attr": "FilmID"}], "primary": ["EpisodeID"], "name": "Episode", "attr": [{"required": true, "type": "INTEGER", "name": "EpisodeID"}, {"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "TEXT", "name": "Name"}, {"required": true, "type": "INTEGER", "name": "Number"}, {"required": true, "type": "INTEGER", "name": "Season"}]}, {"foreign": [], "primary": ["CompanyID"], "name": "Company", "attr": [{"required": true, "type": "INTEGER", "name": "CompanyID"}, {"required": true, "type": "TEXT", "name": "Name"}, {"required": true, "type": "TEXT", "name": "Country"}]}, {"foreign": [], "primary": ["FilmID", "CompanyID"], "name": "FilmCompany", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "CompanyID"}]}, {"foreign": [], "primary": ["GenreID"], "name": "Genre", "attr": [{"required": true, "type": "INTEGER", "name": "GenreID"}, {"required": true, "type": "TEXT", "name": "Name"}]}, {"foreign": [], "primary": ["FilmID", "GenreID"], "name": "FilmGenre", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "GenreID"}]}, {"foreign": [], "primary": ["PersonID"], "name": "Person", "attr": [{"required": true, "type": "INTEGER", "name": "PersonID"}, {"required": true, "type": "TEXT", "name": "Name"}, {"required": true, "type": "TEXT", "name": "Surname"}, {"required": true, "type": "TEXT", "name": "Gender"}, {"required": true, "type": "REAL", "name": "Height"}, {"required": true, "type": "TEXT", "name": "Birth"}]}, {"foreign": [{"ref": "Person", "attr": "PersonID"}], "primary": ["CharacterID"], "name": "Character", "attr": [{"required": true, "type": "INTEGER", "name": "CharacterID"}, {"required": true, "type": "INTEGER", "name": "PersonID"}, {"required": true, "type": "TEXT", "name": "Name"}, {"required": true, "type": "TEXT", "name": "Gender"}]}, {"foreign": [], "primary": ["FilmID", "CharacterID"], "name": "FilmCharacter", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "CharacterID"}]}, {"foreign": [], "primary": ["FilmID", "PersonID"], "name": "Direction", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "PersonID"}]}, {"foreign": [], "primary": ["PosterID"], "name": "Poster", "attr": [{"required": true, "type": "INTEGER", "name": "PosterID"}, {"required": true, "type": "BLOB", "name": "Image"}]}, {"foreign": [], "primary": ["FilmID", "PosterID"], "name": "FilmPoster", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "PosterID"}]}, {"foreign": [], "primary": ["PersonID", "PosterID"], "name": "PersonPoster", "attr": [{"required": true, "type": "INTEGER", "name": "PersonID"}, {"required": true, "type": "INTEGER", "name": "PosterID"}]}]');
-      }
+      // function ajaxPost(url, params, callback) {
+      //   console.log(params);
+      //   callback('[{ "FilmID": "1", "Name": "pay" }, { "FilmID": "2", "Name": "kapao" }]');
+      // }
+      //
+      // function ajaxRequest(url, callback) {
+      //   callback('[{"foreign": [], "primary": ["FilmID"], "name": "Film", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "TEXT", "name": "Type"}, {"required": true, "type": "TEXT", "name": "Title"}, {"required": true, "type": "TEXT", "name": "Year"}, {"required": true, "type": "TEXT", "name": "Plot"}]}, {"foreign": [{"ref": "Film", "attr": "FilmID"}], "primary": ["DetailID"], "name": "Detail", "attr": [{"required": true, "type": "INTEGER", "name": "DetailID"}, {"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "TEXT", "name": "Language"}, {"required": true, "type": "TEXT", "name": "ReleaseDate"}, {"required": true, "type": "TEXT", "name": "Runtime"}, {"required": true, "type": "TEXT", "name": "AspectRatio"}]}, {"foreign": [{"ref": "Film", "attr": "FilmID"}], "primary": ["EpisodeID"], "name": "Episode", "attr": [{"required": true, "type": "INTEGER", "name": "EpisodeID"}, {"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "TEXT", "name": "Name"}, {"required": true, "type": "INTEGER", "name": "Number"}, {"required": true, "type": "INTEGER", "name": "Season"}]}, {"foreign": [], "primary": ["CompanyID"], "name": "Company", "attr": [{"required": true, "type": "INTEGER", "name": "CompanyID"}, {"required": true, "type": "TEXT", "name": "Name"}, {"required": true, "type": "TEXT", "name": "Country"}]}, {"foreign": [], "primary": ["FilmID", "CompanyID"], "name": "FilmCompany", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "CompanyID"}]}, {"foreign": [], "primary": ["GenreID"], "name": "Genre", "attr": [{"required": true, "type": "INTEGER", "name": "GenreID"}, {"required": true, "type": "TEXT", "name": "Name"}]}, {"foreign": [], "primary": ["FilmID", "GenreID"], "name": "FilmGenre", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "GenreID"}]}, {"foreign": [], "primary": ["PersonID"], "name": "Person", "attr": [{"required": true, "type": "INTEGER", "name": "PersonID"}, {"required": true, "type": "TEXT", "name": "Name"}, {"required": true, "type": "TEXT", "name": "Surname"}, {"required": true, "type": "TEXT", "name": "Gender"}, {"required": true, "type": "REAL", "name": "Height"}, {"required": true, "type": "TEXT", "name": "Birth"}]}, {"foreign": [{"ref": "Person", "attr": "PersonID"}], "primary": ["CharacterID"], "name": "Character", "attr": [{"required": true, "type": "INTEGER", "name": "CharacterID"}, {"required": true, "type": "INTEGER", "name": "PersonID"}, {"required": true, "type": "TEXT", "name": "Name"}, {"required": true, "type": "TEXT", "name": "Gender"}]}, {"foreign": [], "primary": ["FilmID", "CharacterID"], "name": "FilmCharacter", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "CharacterID"}]}, {"foreign": [], "primary": ["FilmID", "PersonID"], "name": "Direction", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "PersonID"}]}, {"foreign": [], "primary": ["PosterID"], "name": "Poster", "attr": [{"required": true, "type": "INTEGER", "name": "PosterID"}, {"required": true, "type": "BLOB", "name": "Image"}]}, {"foreign": [], "primary": ["FilmID", "PosterID"], "name": "FilmPoster", "attr": [{"required": true, "type": "INTEGER", "name": "FilmID"}, {"required": true, "type": "INTEGER", "name": "PosterID"}]}, {"foreign": [], "primary": ["PersonID", "PosterID"], "name": "PersonPoster", "attr": [{"required": true, "type": "INTEGER", "name": "PersonID"}, {"required": true, "type": "INTEGER", "name": "PosterID"}]}]');
+      // }
 
     </script>
   </body>

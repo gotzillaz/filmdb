@@ -1,101 +1,49 @@
-
 <!DOCTYPE html>
-
 <html lang='en'>
   <head>
-    <title>Movies & Series Database</title>
 
-    <!-- Stylesheet -->
+    <!--
+      ===================================
+                  Stylesheet
+      ===================================
+    -->
 
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Ubuntu+Mono'>
     <style>
 
-      body {
-        position: relative;
-        display: block;
-        padding: 1px;
-        margin: 0;
-        color: #272822;
-        background-color: #f9f9f9;
-        font-family:  'Ubuntu Mono';
-        font-size: 14px;
-      }
+      body { position: relative; display: block; padding: 1px; margin: 0; color: #272822; background-color: #f9f9f9; font-family:  'Ubuntu Mono'; font-size: 14px; }
+      h1 { margin: 48px; text-align: center; }
 
-      h1 {
-        margin: 48px;
-        text-align: center;
-      }
-
-      .editor-wrapper {
-        position: relative;
-        display: block;
-        width: 480px;
-        max-width: 80%;
-        padding: 16px;
-        margin: auto;
-        border-radius: 4px;
-        box-shadow: 0 0 8px #272822;
-        background-color: #272822;
-        overflow: hidden;
-      }
-
-      .editor {
-        position: relative;
-        display: block;
-        width: 480px;
-        height: 180px;
-        margin: auto;
-      }
-
-      .editor-submit {
-        float: right;
-        position: relative;
-        display: inline-block;
-        padding: 8px 12px;
-        margin-top: 16px;
-        border-radius: 4px;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 0.8rem;
-        opacity: 0.2;
-        text-transform: uppercase;
-        transition: opacity 0.4s ease-in-out;
-      }
-
-      .editor-submit:hover {
-        opacity: 0.8;
-      }
+      .wrapper { position: relative; display: block; width: 480px; max-width: 80%; padding: 16px; margin: auto; border-radius: 4px; box-shadow: 0 0 8px #272822; background-color: #272822; overflow: hidden; }
+      .editor { position: relative; display: block; width: 480px; height: 180px; margin: auto; }
+      .editor-submit { float: right; position: relative; display: inline-block; padding: 8px 12px; margin-top: 16px; border-radius: 4px; border: none; outline: none; cursor: pointer; font-family: inherit; font-size: 0.8rem; opacity: 0.2; text-transform: uppercase; transition: opacity 0.4s ease-in-out; }
+      .editor-submit:hover { opacity: 0.8; }
 
     </style>
+    <title>Movies & Series Database</title>
   </head>
   <body>
 
-    <!-- HTML -->
+    <!--
+      ===================================
+                     HTML
+      ===================================
+    -->
 
     <h1>Movies & Series Database</h1>
-
-    <form id='form' class='editor-wrapper' method='post' action='/select'>
+    <form id='form' class='wrapper' method='post' action='/select'>
       <div id='editor' class='editor'># Input your SQL query here</div>
       <button type='submit' class='editor-submit'>Submit</button>
     </form>
 
-    <!-- Script -->
+    <!--
+      ===================================
+                  JavaScript
+      ===================================
+    -->
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js'></script>
     <script>
-
-      function ajaxRequest(url, callback) {
-        var req = new XMLHttpRequest();
-        req.onreadystatechange = function () {
-          if (req.readyState === 4 && req.status === 200) {
-            callback(req.responseText);
-          }
-        }
-        req.open('POST', url, true);
-        req.send();
-      }
 
       function ajaxPost(url, params, callback) {
         var req  = new XMLHttpRequest();
@@ -108,38 +56,20 @@
         req.send(params);
       }
 
-      function ajaxPostForm(form, callback) {
-        var req  = new XMLHttpRequest(),
-            data = new FormData(form);
-        req.onreadystatechange = function () {
-          if (req.readyState === 4 && req.status === 200) {
-            callback(req.responseText);
-          }
-        }
-        req.open('POST', form.action, true);
-        req.send(data);
-      }
-
       document.addEventListener('DOMContentLoaded', function () {
 
-        // Initialize editor
         var editor = ace.edit('editor');
         editor.setTheme('ace/theme/monokai');
         editor.getSession().setMode('ace/mode/mysql');
         editor.renderer.setShowGutter(false);
         editor.focus();
 
-        // Initialize form
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
+          var url    = from.action,
+              params = JSON.stringify({ query: editor.getSession().getValue().trim() });
           if (event.which !== 13) {
-            ajaxPost(
-              form.action,
-              JSON.stringify({ query: editor.getSession().getValue().trim() }),
-              function (responseText) {
-                console.log(responseText);
-              }
-            );
+            ajaxPost(url, params, queryResponseHandler);
           }
           event.preventDefault();
         });

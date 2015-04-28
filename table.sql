@@ -1,7 +1,7 @@
 CREATE TABLE Film (
   FilmID        INTEGER     NOT NULL,
   Type          TEXT        NOT NULL,
-  Title         TEXT        NOT NULL,
+  Name          TEXT        NOT NULL,
   Year          TEXT        NOT NULL,
   Plot          TEXT        NOT NULL,
   PRIMARY KEY (FilmID)
