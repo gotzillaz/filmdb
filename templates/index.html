@@ -58,7 +58,7 @@
 
       function queryResponseHandler(data) {
         var records = JSON.parse(data);
-        if (data instanceof Array) {
+        if (records instanceof Array) {
           console.log(records);
         } else {
           alert('Something wrong!!');

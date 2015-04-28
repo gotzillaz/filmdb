@@ -112,6 +112,9 @@
           input.name = attrData.name;
           input.type = type[attrData.type]
           input.placeholder = attrData.name;
+          if (attrData.type === "REAL") {
+            input.setAttribute('step', 'any');
+          }
           form.appendChild(input);
         });
         tableData.foreign.forEach(function (foreignData) {
