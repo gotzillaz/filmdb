@@ -1,9 +1,16 @@
-from flask import Flask, jsonify, render_template, request
-import json, sqlite3, re
+from flask import Flask, jsonify, render_template, request, Response
+import json, sqlite3, re, traceback
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 conn = sqlite3.connect('db.sqlite3')
+conn.row_factory = dict_factory
 conn.execute('PRAGMA foreign_keys = ON')
-c = conn.cursor()
+cur = conn.cursor()
 
 app = Flask(__name__)
 
@@ -79,6 +86,31 @@ def ajaxtest():
         return jsonify(user=user, pwd=pwd)  
     else:
         return jsonify(result="GET")
+
+@app.route('/select', methods=['GET', 'POST'])
+def select():
+    if request.method == 'POST':
+        try:
+            print request.data, request.args, request.form
+            data = json.loads(request.data)
+            cur.execute(data['query'])
+            lt = cur.fetchall()
+            print json.dumps(lt)
+            return Response(json.dumps(lt), mimetype='application/json') 
+        except:
+            return jsonify(error=str(traceback.print_exec()))
+    else:
+        pass
+
+@app.route('/schema', methods=['GET','POST'])
+def schema():
+    if request.method == 'POST':
+        try:
+            return showTableSchemaObj()
+        except:
+            return jsonify(error=srt(traceback.print_exec()))
+    else:
+        pass
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
