@@ -123,15 +123,19 @@ def insert():
     if request.method == 'POST':
         try:
             print request.data, request.args, request.form
-            key = [], value = []
-            for k in request.form.keys():
+            key = []
+            value = []
+            print type(request.form['FilmID'])
+            for k in dict(request.form).keys():
+                if k == 'table': 
+                    continue
                 key.append(k)
                 value.append(request.form[k])
-            query_str = 'INSERT INTO '+ request.form['table'] + '(' + ', '.join(key) + ') VALUES (' + ', '.join(value) + ')' 
+            query_str = 'INSERT INTO '+ request.form['table'] + ' (' + ', '.join(key) + ') VALUES (' + ', '.join(map(lambda x: '\"'+x+'\"', value)) + ')' 
             print "=== Query_str ==="
             print query_str
-            conn.execute(query_str)
-            conn.commit()
+            #conn.execute(query_str)
+            #conn.commit()
             return jsonify(status=True)
         except:
             print traceback.print_exec()
