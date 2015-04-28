@@ -156,13 +156,17 @@
             var value = form.querySelector('[name=' + attrData.name + ']').value;
             if (attrData.type === "BLOB") {
               value = form.querySelector('[name=' + attrData.name + ']').files[0];
-              console.log(value)
             }
             formData.append(attrData.name, value);
           });
           formData.append('table', tableData.name);
           ajaxPost('/insert', formData, function (responseText) {
-            console.log(responseText);
+            var status = JSON.stringify(responseText);
+            if (status) {
+              alert('Data has already inserted!');
+            } else {
+              alert('Something broken');
+            }
           });
           event.preventDefault();
         });
