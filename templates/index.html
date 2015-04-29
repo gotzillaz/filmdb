@@ -68,7 +68,13 @@
           for (var prop in rows[0]) {
             if (rows[0].hasOwnProperty(prop)) {
               var td =  document.createElement('TD');
-              td.textContent = column[prop];
+              if (prop === 'Image') {
+                var img = document.createElement('IMG');
+                img.src = column[prop];
+                td.appendChild(img);
+              } else {
+                td.textContent = column[prop];
+              }
               tr.appendChild(td);
             }
           }
