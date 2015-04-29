@@ -18,6 +18,10 @@
       .editor { position: relative; display: block; width: 480px; height: 180px; margin: auto; }
       .editor-submit { float: right; position: relative; display: inline-block; padding: 8px 12px; margin-top: 16px; border-radius: 4px; border: none; outline: none; cursor: pointer; font-family: inherit; font-size: 0.8rem; opacity: 0.2; text-transform: uppercase; transition: opacity 0.4s ease-in-out; }
       .editor-submit:hover { opacity: 0.8; }
+      .result { position: relative; display: block; width: 80%; margin: auto; margin-top: 48px; }
+      .result table { width: 100%; text-align: center; }
+      .result table tr:first-child { background-color: #ccc; }
+      .result td { padding: 8px; }
 
     </style>
     <title>Movies & Series Database</title>
@@ -35,6 +39,7 @@
       <div id='editor' class='editor'># Input your SQL query here</div>
       <button type='submit' class='editor-submit'>Submit</button>
     </form>
+    <div id='result' class='result'><table></table></div>
 
     <!--
       ===================================
@@ -56,10 +61,35 @@
         req.send(params);
       }
 
+      function createResultTable(rows) {
+        var table = document.createElement('TABLE');
+        rows.forEach(function (column) {
+          var tr = document.createElement('TR');
+          for (var prop in rows[0]) {
+            if (rows[0].hasOwnProperty(prop)) {
+              var td =  document.createElement('TD');
+              td.textContent = column[prop];
+              tr.appendChild(td);
+            }
+          }
+          table.appendChild(tr);
+        });
+
+        var result = document.getElementById('result');
+        result.replaceChild(table, result.firstElementChild);
+      }
+
       function queryResponseHandler(data) {
-        var records = JSON.parse(data);
+        var records = JSON.parse(data),
+            heads   = {};
         if (records instanceof Array) {
-          console.log(records);
+          for (var prop in records[0]) {
+            if (records[0].hasOwnProperty(prop)) {
+              heads[prop] = prop;
+            }
+          }
+          records.unshift(heads);
+          createResultTable(records);
         } else {
           alert('Something wrong!!');
         }
@@ -75,6 +105,9 @@
 
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          ajaxPost('', '', queryResponseHandler);
+          return
           var url    = form.action,
               params = JSON.stringify({ query: editor.getSession().getValue().trim() });
           if (event.which !== 13) {
