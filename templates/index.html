@@ -13,11 +13,14 @@
 
       body { position: relative; display: block; padding: 1px; margin: 0; color: #272822; background-color: #f9f9f9; font-family:  'Ubuntu Mono'; font-size: 14px; }
       h1 { margin: 48px; text-align: center; }
+      input { display: block; box-sizing: border-box; width: 100%; padding: 12px 24px; margin: 8px 0; border: none; outline: none; border-radius: 4px; color: #272822; background-color: #ccc; font-size: inherit; font-family: inherit; }
 
-      .wrapper { position: relative; display: block; width: 480px; max-width: 80%; padding: 16px; margin: auto; border-radius: 4px; box-shadow: 0 0 8px #272822; background-color: #272822; overflow: hidden; }
+      .wrapper { position: relative; display: block; box-sizing: border-box; width: 480px; max-width: 80%; padding: 16px; margin: auto; margin-top: 36px; border-radius: 4px; box-shadow: 0 0 8px #272822; color: #fff; background-color: #272822; overflow: hidden; }
+      .wrapper.white { padding: 0; background: none; box-shadow: none; }
+      .wrapper-submit { float: right; position: relative; display: inline-block; padding: 8px 12px; margin-top: 16px; border-radius: 4px; border: none; outline: none; cursor: pointer; font-family: inherit; font-size: 0.8rem; opacity: 0.2; text-transform: uppercase; transition: opacity 0.4s ease-in-out; }
+      .wrapper-submit.dark { background-color: #ccc; opacity: 0.6; color: #fff; margin-top: 0px; }
+      .wrapper-submit:hover { opacity: 0.8; }
       .editor { position: relative; display: block; width: 480px; height: 180px; margin: auto; }
-      .editor-submit { float: right; position: relative; display: inline-block; padding: 8px 12px; margin-top: 16px; border-radius: 4px; border: none; outline: none; cursor: pointer; font-family: inherit; font-size: 0.8rem; opacity: 0.2; text-transform: uppercase; transition: opacity 0.4s ease-in-out; }
-      .editor-submit:hover { opacity: 0.8; }
       .result { position: relative; display: block; width: 80%; margin: auto; margin-top: 48px; }
       .result table { width: 100%; text-align: center; }
       .result table tr:first-child { background-color: #ccc; }
@@ -35,9 +38,14 @@
     -->
 
     <h1>Movies & Series Database</h1>
-    <form id='form' class='wrapper' method='post' action='/select'>
+    <form id='form' class='wrapper' method='post'>
       <div id='editor' class='editor'># Input your SQL query here</div>
-      <button type='submit' class='editor-submit'>Submit</button>
+      <button type='submit' class='wrapper-submit'>Submit</button>
+    </form>
+    <form id='post' class='wrapper white'>
+      <input name='url' type='text' placeholder='url'>
+      <input name='params' type='text' placeholder='key=value'>
+      <button type='submit' class='wrapper-submit dark'>Post</button>
     </form>
     <div id='result' class='result'><table></table></div>
 
@@ -111,11 +119,19 @@
 
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
-          var url    = form.action,
-              params = JSON.stringify({ query: editor.getSession().getValue().trim() });
+          var url    = '/select',
+              params = JSON.stringify('query=' + editor.getSession().getValue().trim());
           if (event.which !== 13) {
             ajaxPost(url, params, queryResponseHandler);
           }
+          event.preventDefault();
+        });
+
+        var post = document.getElementById('post');
+        post.addEventListener('submit', function (event) {
+          var url    = '158.108.143.75:8080' + post.querySelector('[name="url"]').value,
+              params = post.querySelector('[name="params"]').value;
+          ajaxPost(url, params, queryResponseHandler);
           event.preventDefault();
         });
       });

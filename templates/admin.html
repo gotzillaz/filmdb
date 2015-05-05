@@ -60,17 +60,6 @@
 
     <script>
 
-      function ajaxRequest(url, callback) {
-        var req = new XMLHttpRequest();
-        req.onreadystatechange = function () {
-          if (req.readyState === 4 && req.status === 200) {
-            callback(req.responseText);
-          }
-        }
-        req.open('POST', url, true);
-        req.send();
-      }
-
       function ajaxPost(url, params, callback) {
         var req  = new XMLHttpRequest();
         req.onreadystatechange = function () {
@@ -146,7 +135,7 @@
       }
 
       document.addEventListener('DOMContentLoaded', function () {
-        ajaxRequest('/schema', function (responseText) {
+        ajaxPost('/schema', '',function (responseText) {
           schemaHandler(JSON.parse(responseText));
         });
 
@@ -166,9 +155,9 @@
           ajaxPost('/insert', formData, function (responseText) {
             var status = JSON.stringify(responseText);
             if (status) {
-              alert('Data has already inserted!');
+              alert('Insert complete!');
             } else {
-              alert('Something broken');
+              alert('Something broken!');
             }
           });
           event.preventDefault();
