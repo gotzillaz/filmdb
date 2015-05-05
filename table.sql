@@ -35,8 +35,8 @@ CREATE TABLE Company (
 CREATE TABLE VideoCompany (
   VideoID       INTEGER     NOT NULL,
   CompanyID     INTEGER     NOT NULL,
-  PRIMARY KEY (VideoID, CompanyID)
-  FOREIGN KEY (VideoID) REFERENCES Video(VideoID)
+  PRIMARY KEY (VideoID, CompanyID),
+  FOREIGN KEY (VideoID) REFERENCES Video(VideoID),
   FOREIGN KEY (CompanyID) REFERENCES Company(CompanyID)
 );
 CREATE TABLE Genre (
@@ -47,8 +47,8 @@ CREATE TABLE Genre (
 CREATE TABLE VideoGenre (
   VideoID       INTEGER     NOT NULL,
   GenreID       INTEGER     NOT NULL,
-  PRIMARY KEY (VideoID, GenreID)
-  FOREIGN KEY (VideoID) REFERENCES Video(VideoID)
+  PRIMARY KEY (VideoID, GenreID),
+  FOREIGN KEY (VideoID) REFERENCES Video(VideoID),
   FOREIGN KEY (GenreID) REFERENCES Genre(GenreID)
 );
 CREATE TABLE Person (
@@ -71,16 +71,22 @@ CREATE TABLE Character (
 CREATE TABLE VideoCharacter (
   VideoID       INTEGER     NOT NULL,
   CharacterID   INTEGER     NOT NULL,
-  PRIMARY KEY (VideoID, CharacterID)
-  FOREIGN KEY (VideoID) REFERENCES Video(VideoID)
+  PRIMARY KEY (VideoID, CharacterID),
+  FOREIGN KEY (VideoID) REFERENCES Video(VideoID),
   FOREIGN KEY (CharacterID) REFERENCES Character(CharacterID)
 );
 CREATE TABLE Director (
-  VideoID       INTEGER     NOT NULL,
+  DirectorID    INTEGER     NOT NULL,
   PersonID      INTEGER     NOT NULL,
-  PRIMARY KEY (VideoID, PersonID)
-  FOREIGN KEY (VideoID) REFERENCES Video(VideoID)
+  PRIMARY KEY (DirectorID),
   FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
+);
+CREATE TABLE VideoDirector (
+  VideoID         INTEGER     NOT NULL,
+  DirectorID      INTEGER     NOT NULL,
+  PRIMARY KEY (VideoID, DirectorID),
+  FOREIGN KEY (VideoID) REFERENCES Video(VideoID),
+  FOREIGN KEY (DirectorID) REFERENCES Person(DirectorID)
 );
 CREATE TABLE Poster (
   PosterID      INTEGER     NOT NULL,
@@ -91,15 +97,14 @@ CREATE TABLE Poster (
 CREATE TABLE VideoPoster (
   VideoID       INTEGER     NOT NULL,
   PosterID      INTEGER     NOT NULL,
-  PRIMARY KEY (VideoID, PosterID)
-  FOREIGN KEY (VideoID) REFERENCES Video(VideoID)
+  PRIMARY KEY (VideoID, PosterID),
+  FOREIGN KEY (VideoID) REFERENCES Video(VideoID),
   FOREIGN KEY (PosterID) REFERENCES Poster(PosterID)
 );
 CREATE TABLE PersonPoster (
   PersonID      INTEGER     NOT NULL,
   PosterID      INTEGER     NOT NULL,
-  PRIMARY KEY (PersonID, PosterID)
-  FOREIGN KEY (PersonID) REFERENCES Person(PersonID)
+  PRIMARY KEY (PersonID, PosterID),
+  FOREIGN KEY (PersonID) REFERENCES Person(PersonID),
   FOREIGN KEY (PosterID) REFERENCES Poster(PosterID)
 );
-
