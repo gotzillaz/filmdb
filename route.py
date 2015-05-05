@@ -71,33 +71,55 @@ def hello(name=None):
 def admin():
     return render_template('admin.html')
 
-@app.route("/sql")
-def sql():
-    c.execute("SELECT * FROM Film")
-    return str(c.fetchall())
-    #return str(len(st))
-
-@app.route("/table")
+@app.route("/table", methods=['POST'])
 def table():
-    return readTableFile()
+    try:
+        sql_q = "SELECT * FROM %s" % (request.form['name'])
+        cur.execute(sql_q)
+        return json.dumps(cur.fetchall())
+    except BaseException, e:
+        print str(e)
+        return jsonify(status=False,error=str(e))
 
-@app.route('/ajax', methods=['GET', 'POST'])
-def ajaxtest():
-    if request.method == "POST":
-        user = request.form['username']
-        pwd = request.form['password']
-        print user, pwd , request.args, request.form
-        return jsonify(user=user, pwd=pwd)  
-    else:
-        return jsonify(result="GET")
+@app.route("/wh/<table>", methods=['POST'])
+def wt(table=None):
+    try:
+        sql_q = ""
+        if 'id' in request.form:
+            sql_q = "SELECT * FROM %s WHERE %sID='%s'" % (table, table, request.form['id'])
+        else:
+            sql_q = "SELECT * FROM %s WHERE Name='%s'" % (table, request.form['name'])
+        cur.execute(sql_q)
+        return json.dumps(cur.fetchall())
+    except BaseException, e:
+        print str(e)
+        return jsonify(status=False,error=str(e))
+
+@app.route("/wh/<m_table>/sq/<s_table>", methods=['POST'])
+def wt_sq(m_table=None, s_table=None):
+    try:
+        m_table = m_table.capitalize()
+        s_table = s_table.capitalize()
+        sql_q = """ SELECT * FROM %s
+                    WHERE %s.%sID IN
+                    (
+                        SELECT %s.%sID FROM %s
+                        WHERE %s.%sID='%s'
+                    )
+                """ % (s_table, s_table, s_table, s_table, s_table, s_table, s_table, m_table, request.form['id'])
+        cur.execute(sql_q)
+        return json.dumps(cur.fetchall())
+    except BaseException, e:
+        print str(e)
+        return jsonify(status=False,error=str(e))
 
 @app.route('/select', methods=['GET', 'POST'])
 def select():
     if request.method == 'POST':
         try:
             print request.data, request.args, request.form
-            data = json.loads(request.data)
-            cur.execute(data['query'])
+            # data = json.loads(request.data)
+            cur.execute(request.form['query'])
             print "Before"
             lt = cur.fetchall()
             '''
@@ -123,7 +145,14 @@ def schema():
             print str(e)
             return jsonify(status=False, error=str(e))
     else:
-        pass
+        try:
+            cur.execute("SELECT sql FROM sqlite_master WHERE type='table'")
+            res = cur.fetchall()
+            print json.dumps('\n'.join(map(lambda x: x['sql'], res)))
+            return json.dumps('\n'.join(map(lambda x: x['sql'], res)))
+        except BaseException, e:
+            print str(e)
+            return jsonify(status=False, error=str(e))
 
 @app.route('/insert', methods=['GET','POST'])
 def insert():
