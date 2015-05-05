@@ -26,32 +26,32 @@ FilmDB is a website, which collects information about films and television serie
 <b>/schema:</b> return all tables schema of database in text format
 
 ```
-curl -X GET 158.108.143.75:8080/schema
+curl -X GET hostname/schema
 ```
 
 <b>/select:</b> execute &lt;query&gt; as select statement and return that result in JSON Array format
 
 ```
-curl -d "query=SELECT * FROM Video" -X POST 158.108.143.75:8080/select
+curl -d "query=SELECT * FROM Video" -X POST hostname/select
 ```
 
 <b>/table:</b> return all records of &lt;table&gt; in JSON Array format
 
 ```
-curl -d "name=Video" -X POST 158.108.143.75:8080/table
+curl -d "name=Video" -X POST hostname/table
 ```
 
 <b>/wh/&lt;table&gt;:</b> return all records from &lt;table&gt; where(wh) &lt;id&gt; is matched in JSON Array format
 
 ```
-curl -d "id=1" -X POST 158.108.143.75:8080/wh/video
-curl -d "name=The Fast and the Furious" -X POST 158.108.143.75:8080/wh/video
+curl -d "id=1" -X POST hostname/wh/video
+curl -d "name=The Fast and the Furious" -X POST hostname/wh/video
 ```
 
 <b>/wh/&lt;table&gt;/sq/&lt;subtable&gt;:</b> return all records from &lt;subtable&gt; by subquery(sq) exist in &lt;table&gt; and &lt;subtable&gt; in JSON Array format
 
 ```
-curl -d "id=1" -X POST 158.108.143.75:8080/wh/video/sq/detail
+curl -d "id=1" -X POST hostname/wh/video/sq/detail
 ```
 
 ## Developed by ##
