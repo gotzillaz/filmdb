@@ -137,6 +137,9 @@ def select():
         try:
             print request.data, request.args, request.form
             # data = json.loads(request.data)
+            sql_q = request.form['query'].upper()
+            if sql_q[0:6] != 'SELECT':
+                raise BaseException
             cur.execute(request.form['query'])
             print "Before"
             lt = cur.fetchall()
