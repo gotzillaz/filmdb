@@ -64,6 +64,8 @@ curl -d "id=1" -X POST <hostname>/wh/video/cn/detail
 curl -d "id=1" -X POST <hostname>/wh/video/cr/company
 ```
 
-
 ## Developed by ##
-Gang of Three (GoT)
+### Gang of Three (GoT) ###
+* Supachai    Laparparat [@supachailllpay](https://github.com/supachailllpay)
+* Bodin   Chinthanet [@gotzillaz](https://github.com/gotzillaz)
+* Saringkarn  Pumjan
