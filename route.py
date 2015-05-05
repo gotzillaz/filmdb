@@ -107,7 +107,12 @@ def schema():
             print str(e)
             return jsonify(status=False, error=str(e))
     else:
-        pass
+        try:
+            cur.execute("SELECT sql FROM sqlite_master WHERE type='table'")
+            return '\n'.join(map(lambda x: x[0], cur.fetchall()))
+        except BaseException, e:
+            print str(e)
+            return jsonify(status=False, error=str(e))
 
 @app.route('/insert', methods=['GET','POST'])
 def insert():
