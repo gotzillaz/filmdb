@@ -73,7 +73,27 @@ def admin():
 
 @app.route("/table")
 def table():
-    return readTableFile()
+    try:
+        sql_q = "SELECT * FROM %s" % (request.form['name'])
+        cur.execute(sql_q)
+        return json.dumps(cur.fetchall())
+    except BaseException e:
+        print str(e)
+        return jsonify(status=False,error=str(e))
+
+@app.route("/wt/<table>", methods=['POST'])
+def wt(table=None):
+    try:
+        sql_q = ""
+        if 'id' in request.form:
+            sql_q = "SELECT * FROM %s WHERE %sID='%s'" % (table, table, request.form['id'])
+        else:
+            sql_q = "SELECT * FROM %s WHERE Name='%s'" % (table, request.form['name'])
+        cur.execute(sql_q)
+        return json.dumps(cur.fetchall())
+    except BaseException e:
+        print str(e)
+        return jsonify(status=False,error=str(e))
 
 @app.route('/select', methods=['GET', 'POST'])
 def select():
