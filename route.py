@@ -71,17 +71,17 @@ def hello(name=None):
 def admin():
     return render_template('admin.html')
 
-@app.route("/table")
+@app.route("/table", methods=['POST'])
 def table():
     try:
         sql_q = "SELECT * FROM %s" % (request.form['name'])
         cur.execute(sql_q)
         return json.dumps(cur.fetchall())
-    except BaseException e:
+    except BaseException, e:
         print str(e)
         return jsonify(status=False,error=str(e))
 
-@app.route("/wt/<table>", methods=['POST'])
+@app.route("/wh/<table>", methods=['POST'])
 def wt(table=None):
     try:
         sql_q = ""
@@ -91,7 +91,25 @@ def wt(table=None):
             sql_q = "SELECT * FROM %s WHERE Name='%s'" % (table, request.form['name'])
         cur.execute(sql_q)
         return json.dumps(cur.fetchall())
-    except BaseException e:
+    except BaseException, e:
+        print str(e)
+        return jsonify(status=False,error=str(e))
+
+@app.route("/wh/<m_table>/sq/<s_table>", methods=['POST'])
+def wt_sq(m_table=None, s_table=None):
+    try:
+        m_table = m_table.capitalize()
+        s_table = s_table.capitalize()
+        sql_q = """ SELECT * FROM %s
+                    WHERE %s.%sID IN
+                    (
+                        SELECT %s.%sID FROM %s
+                        WHERE %s.%sID='%s'
+                    )
+                """ % (s_table, s_table, s_table, s_table, s_table, s_table, s_table, m_table, request.form['id'])
+        cur.execute(sql_q)
+        return json.dumps(cur.fetchall())
+    except BaseException, e:
         print str(e)
         return jsonify(status=False,error=str(e))
 
@@ -129,7 +147,9 @@ def schema():
     else:
         try:
             cur.execute("SELECT sql FROM sqlite_master WHERE type='table'")
-            return '\n'.join(map(lambda x: x[0], cur.fetchall()))
+            res = cur.fetchall()
+            print json.dumps('\n'.join(map(lambda x: x['sql'], res)))
+            return json.dumps('\n'.join(map(lambda x: x['sql'], res)))
         except BaseException, e:
             print str(e)
             return jsonify(status=False, error=str(e))
