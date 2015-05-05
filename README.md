@@ -22,15 +22,15 @@ FilmDB is a website, which collects information about films and television serie
  post   | wh/person/sq/character | &lt;id&gt;
  post   | wh/person/sq/poster    | &lt;id&gt;
 
-<b>/schema:</b> Return all tables schema of database in text format.
+<b>/schema:</b> return all tables schema of database in text format
 
-<b>/select:</b> Execute <query> as select statement and return that result in JSON Array format.
+<b>/select:</b> execute &lt;query&gt; as select statement and return that result in JSON Array format
 
-<b>/table:</b> Return all records of <table> in JSON Array format.
+<b>/table:</b> return all records of &lt;table&gt; in JSON Array format
 
-<b>/wh/<table>:</b> Return all records from <table> where(wh) <id> is matched in JSON Array format.
+<b>/wh/&lt;table&gt;:</b> return all records from &lt;table&gt; where(wh) &lt;id&gt; is matched in JSON Array format
 
-<b>/wh/<table>/sq/<subtable>:</b> Return all records from <subtable> by subquery(sq) exist in <table> and <subtable> in JSON Array format.
+<b>/wh/&lt;table&gt;/sq/&lt;subtable&gt;:</b> return all records from &lt;subtable&gt; by subquery(sq) exist in &lt;table&gt; and &lt;subtable&gt; in JSON Array format
 
 ## Developed by ##
 Gang of Three (G.O.T)
