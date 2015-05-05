@@ -68,7 +68,7 @@
           for (var prop in rows[0]) {
             if (rows[0].hasOwnProperty(prop)) {
               var td =  document.createElement('TD');
-              if (prop === 'Image') {
+              if (prop === 'Image' && column !== rows[0]) {
                 var img = document.createElement('IMG');
                 img.src = column[prop];
                 td.appendChild(img);
@@ -111,9 +111,6 @@
 
         var form = document.getElementById('form');
         form.addEventListener('submit', function (event) {
-          event.preventDefault();
-          ajaxPost('', '', queryResponseHandler);
-          return
           var url    = form.action,
               params = JSON.stringify({ query: editor.getSession().getValue().trim() });
           if (event.which !== 13) {
