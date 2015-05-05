@@ -71,33 +71,17 @@ def hello(name=None):
 def admin():
     return render_template('admin.html')
 
-@app.route("/sql")
-def sql():
-    c.execute("SELECT * FROM Film")
-    return str(c.fetchall())
-    #return str(len(st))
-
 @app.route("/table")
 def table():
     return readTableFile()
-
-@app.route('/ajax', methods=['GET', 'POST'])
-def ajaxtest():
-    if request.method == "POST":
-        user = request.form['username']
-        pwd = request.form['password']
-        print user, pwd , request.args, request.form
-        return jsonify(user=user, pwd=pwd)  
-    else:
-        return jsonify(result="GET")
 
 @app.route('/select', methods=['GET', 'POST'])
 def select():
     if request.method == 'POST':
         try:
             print request.data, request.args, request.form
-            data = json.loads(request.data)
-            cur.execute(data['query'])
+            # data = json.loads(request.data)
+            cur.execute(request.form['query'])
             print "Before"
             lt = cur.fetchall()
             '''
