@@ -30,40 +30,42 @@ FilmDB is a website, which collects information about films and television serie
 <b>/schema:</b> return all tables schema of database in text format
 
 ```
-curl -X GET hostname/schema
+curl -X GET <hostname>/schema
 ```
 
 <b>/select:</b> execute &lt;query&gt; as select statement and return that result in JSON Array format
 
 ```
-curl -d "query=SELECT * FROM Video" -X POST hostname/select
+curl -d "query=SELECT * FROM Video" -X POST <hostname>/select
 ```
 
 <b>/table:</b> return all records of &lt;table&gt; in JSON Array format
 
 ```
-curl -d "name=Video" -X POST hostname/table
+curl -d "name=Video" -X POST <hostname>/table
 ```
 
 <b>/wh/&lt;table&gt;:</b> return all records from &lt;table&gt; where(wh) &lt;id&gt; is matched in JSON Array format
 
 ```
-curl -d "id=1" -X POST hostname/wh/video
-curl -d "name=The Fast and the Furious" -X POST hostname/wh/video
+curl -d "id=1" -X POST <hostname>/wh/video
+curl -d "name=The Fast and the Furious" -X POST <hostname>/wh/video
 ```
 
 <b>/wh/&lt;table&gt;/cn/&lt;subtable&gt;:</b> return all records from &lt;subtable&gt; which connect(cn) and exist in &lt;table&gt; that &lt;id&gt; is matched in JSON Array format
 
 ```
-curl -d "id=1" -X POST hostname/wh/video/cn/detail
+curl -d "id=1" -X POST <hostname>/wh/video/cn/detail
 ```
 
 <b>/wh/&lt;table&gt;/cr/&lt;subtable&gt;:</b> return all records from &lt;subtable&gt; which cross(cr) and exist in &lt;table&gt; that &lt;id&gt; is matched
 
 ```
-curl -d "id=1" -X POST hostname/wh/video/cr/company
+curl -d "id=1" -X POST <hostname>/wh/video/cr/company
 ```
 
-
 ## Developed by ##
-Gang of Three (G.O.T)
+### Gang of Three (GoT) ###
+* Supachai    Laparparat [@supachailllpay](https://github.com/supachailllpay)
+* Bodin   Chinthanet [@gotzillaz](https://github.com/gotzillaz)
+* Saringkarn  Pumjan

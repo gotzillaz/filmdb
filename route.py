@@ -95,8 +95,8 @@ def wt(table=None):
         print str(e)
         return jsonify(status=False,error=str(e))
 
-@app.route("/wh/<m_table>/sq/<s_table>", methods=['POST'])
-def wt_sq(m_table=None, s_table=None):
+@app.route("/wh/<m_table>/cn/<s_table>", methods=['POST'])
+def wh_cn(m_table=None, s_table=None):
     try:
         m_table = m_table.capitalize()
         s_table = s_table.capitalize()
@@ -107,6 +107,24 @@ def wt_sq(m_table=None, s_table=None):
                         WHERE %s.%sID='%s'
                     )
                 """ % (s_table, s_table, s_table, s_table, s_table, s_table, s_table, m_table, request.form['id'])
+        cur.execute(sql_q)
+        return json.dumps(cur.fetchall())
+    except BaseException, e:
+        print str(e)
+        return jsonify(status=False,error=str(e))
+
+@app.route("/wh/<m_table>/cr/<s_table>", methods=['POST'])
+def wh_cr(m_table=None, s_table=None):
+    try:
+        m_table = m_table.capitalize()
+        s_table = s_table.capitalize()
+        sql_q = """ SELECT * FROM %s
+                    WHERE %s.%sID IN
+                    (
+                        SELECT %s.%sID FROM %s
+                        WHERE %s.%sID='%s'
+                    )
+                """ % (s_table, s_table, s_table, m_table+s_table, s_table, m_table+s_table, m_table+s_table, m_table, request.form['id'])
         cur.execute(sql_q)
         return json.dumps(cur.fetchall())
     except BaseException, e:
